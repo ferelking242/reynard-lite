@@ -1,0 +1,1082 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0111EC262F48431600490C82 /* GeckoView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01GECKO0002F2F289C001F0001 /* GeckoView.framework */; };
+		01GECKO0012F2F289C001F0001 /* GeckoView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01GECKO0002F2F289C001F0001 /* GeckoView.framework */; };
+		01GECKO0022F2F289C001F0001 /* GeckoView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 01GECKO0002F2F289C001F0001 /* GeckoView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		02WCPBF12F3000000000001 /* Reynard Helper.appex in Embed Process Extensions */ = {isa = PBXBuildFile; fileRef = 02WCPAPP2F3000000000001 /* Reynard Helper.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		03OLPBF12F3100000000001 /* OpenIn.appex in Embed Process Extensions */ = {isa = PBXBuildFile; fileRef = 03OLAPP2F3100000000001 /* OpenIn.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0111EC282F48431600490C82 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 018C67962F2F289C001F0BBB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01GECKO0012F2F289C001F0002;
+			remoteInfo = GeckoView;
+		};
+		01GECKO0032F2F289C001F0001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 018C67962F2F289C001F0BBB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 01GECKO0012F2F289C001F0002;
+			remoteInfo = GeckoView;
+		};
+		02WCPPRX2F3000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 018C67962F2F289C001F0BBB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 02WCPTGT2F3000000000001;
+			remoteInfo = WebContentProcess;
+		};
+		03OLPRX2F3100000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 018C67962F2F289C001F0BBB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 03OLTGT2F3100000000001;
+			remoteInfo = OpenIn;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		01GECKO0042F2F289C001F0001 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				01GECKO0022F2F289C001F0001 /* GeckoView.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02PROCOPY2F3000000000001 /* Embed Process Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				03OLPBF12F3100000000001 /* OpenIn.appex in Embed Process Extensions */,
+				02WCPBF12F3000000000001 /* Reynard Helper.appex in Embed Process Extensions */,
+			);
+			name = "Embed Process Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		018C679E2F2F289C001F0BBB /* Reynard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reynard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		01GECKO0002F2F289C001F0001 /* GeckoView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GeckoView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Reynard.xcconfig; sourceTree = "<group>"; };
+		02WCPAPP2F3000000000001 /* Reynard Helper.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Reynard Helper.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03OLAPP2F3100000000001 /* OpenIn.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OpenIn.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0111ED022F4A19FD00490C82 /* Exceptions for "Helper" folder in "GeckoView" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Helper.swift,
+				Info.plist,
+				main.m,
+			);
+			target = 01GECKO0012F2F289C001F0002 /* GeckoView */;
+		};
+		0111ED052F4A1A5900490C82 /* Exceptions for "Helper" folder in "Reynard Helper" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Helper.swift,
+				main.m,
+			);
+			target = 02WCPTGT2F3000000000001 /* Reynard Helper */;
+		};
+		018C67B02F2F289E001F0BBB /* Exceptions for "Reynard" folder in "Reynard" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				JIT/Unsandboxed/ptrace_jit.c,
+				Resources/Info.plist,
+			);
+			target = 018C679D2F2F289C001F0BBB /* Reynard */;
+		};
+		01D723872FE2DDA300E9D86C /* Exceptions for "Reynard" folder in "GeckoView" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/Utils.m,
+			);
+			target = 01GECKO0012F2F289C001F0002 /* GeckoView */;
+		};
+		01GECKO0072F2F289C001F0001 /* Exceptions for "GeckoView" folder in "GeckoView" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 01GECKO0012F2F289C001F0002 /* GeckoView */;
+		};
+		03OLEXC12F3100000000001 /* Exceptions for "Extensions" folder in "OpenIn" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				OpenIn/Info.plist,
+			);
+			target = 03OLTGT2F3100000000001 /* OpenIn */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0111EABD2F48369400490C82 /* Helper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0111ED022F4A19FD00490C82 /* Exceptions for "Helper" folder in "GeckoView" target */,
+				0111ED052F4A1A5900490C82 /* Exceptions for "Helper" folder in "Reynard Helper" target */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		018C67A02F2F289C001F0BBB /* Reynard */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				018C67B02F2F289E001F0BBB /* Exceptions for "Reynard" folder in "Reynard" target */,
+				01D723872FE2DDA300E9D86C /* Exceptions for "Reynard" folder in "GeckoView" target */,
+			);
+			path = Reynard;
+			sourceTree = "<group>";
+		};
+		01GECKO0082F2F289C001F0001 /* GeckoView */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				01GECKO0072F2F289C001F0001 /* Exceptions for "GeckoView" folder in "GeckoView" target */,
+			);
+			path = GeckoView;
+			sourceTree = "<group>";
+		};
+		03OLGRP12F3100000000001 /* Extensions */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				03OLEXC12F3100000000001 /* Exceptions for "Extensions" folder in "OpenIn" target */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		018C679B2F2F289C001F0BBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01GECKO0012F2F289C001F0001 /* GeckoView.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01GECKO0092F2F289C001F0001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02WCPFRM2F3000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0111EC262F48431600490C82 /* GeckoView.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03OLFRM2F3100000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		018C67952F2F289C001F0BBB = {
+			isa = PBXGroup;
+			children = (
+				01E7AF522F2F9C42002DEC89 /* Configuration */,
+				01GECKO0082F2F289C001F0001 /* GeckoView */,
+				0111EABD2F48369400490C82 /* Helper */,
+				03OLGRP12F3100000000001 /* Extensions */,
+				018C67A02F2F289C001F0BBB /* Reynard */,
+				018C679F2F2F289C001F0BBB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		018C679F2F2F289C001F0BBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				018C679E2F2F289C001F0BBB /* Reynard.app */,
+				01GECKO0002F2F289C001F0001 /* GeckoView.framework */,
+				02WCPAPP2F3000000000001 /* Reynard Helper.appex */,
+				03OLAPP2F3100000000001 /* OpenIn.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		01E7AF522F2F9C42002DEC89 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		01GECKO00A2F2F289C001F0001 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		018C679D2F2F289C001F0BBB /* Reynard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 018C67B12F2F289E001F0BBB /* Build configuration list for PBXNativeTarget "Reynard" */;
+			buildPhases = (
+				018C679A2F2F289C001F0BBB /* Sources */,
+				018C679B2F2F289C001F0BBB /* Frameworks */,
+				018C679C2F2F289C001F0BBB /* Resources */,
+				01GECKO0042F2F289C001F0001 /* Embed Frameworks */,
+				02PROCOPY2F3000000000001 /* Embed Process Extensions */,
+				01GECKO0122F2F289C001F0001 /* Copy Gecko Stuff */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				01GECKO00B2F2F289C001F0001 /* PBXTargetDependency */,
+				02WCPDEP2F3000000000001 /* PBXTargetDependency */,
+				03OLDEP2F3100000000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				018C67A02F2F289C001F0BBB /* Reynard */,
+			);
+			name = Reynard;
+			packageProductDependencies = (
+			);
+			productName = Reynard;
+			productReference = 018C679E2F2F289C001F0BBB /* Reynard.app */;
+			productType = "com.apple.product-type.application";
+		};
+		01GECKO0012F2F289C001F0002 /* GeckoView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01GECKO00C2F2F289C001F0001 /* Build configuration list for PBXNativeTarget "GeckoView" */;
+			buildPhases = (
+				01GECKO00A2F2F289C001F0001 /* Headers */,
+				01GECKO00D2F2F289C001F0001 /* Sources */,
+				01GECKO0092F2F289C001F0001 /* Frameworks */,
+				01GECKO00E2F2F289C001F0001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0111EABD2F48369400490C82 /* Helper */,
+				01GECKO0082F2F289C001F0001 /* GeckoView */,
+			);
+			name = GeckoView;
+			productName = GeckoView;
+			productReference = 01GECKO0002F2F289C001F0001 /* GeckoView.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		02WCPTGT2F3000000000001 /* Reynard Helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02WCPCFG2F3000000000001 /* Build configuration list for PBXNativeTarget "Reynard Helper" */;
+			buildPhases = (
+				02WCPSRC2F3000000000001 /* Sources */,
+				02WCPFRM2F3000000000001 /* Frameworks */,
+				02WCPRES2F3000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0111EC292F48431600490C82 /* PBXTargetDependency */,
+			);
+			name = "Reynard Helper";
+			packageProductDependencies = (
+			);
+			productName = WebContentProcess;
+			productReference = 02WCPAPP2F3000000000001 /* Reynard Helper.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		03OLTGT2F3100000000001 /* OpenIn */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03OLCFG2F3100000000001 /* Build configuration list for PBXNativeTarget "OpenIn" */;
+			buildPhases = (
+				03OLSRC2F3100000000001 /* Sources */,
+				03OLFRM2F3100000000001 /* Frameworks */,
+				03OLRES2F3100000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				03OLGRP12F3100000000001 /* Extensions */,
+			);
+			name = OpenIn;
+			packageProductDependencies = (
+			);
+			productName = OpenIn;
+			productReference = 03OLAPP2F3100000000001 /* OpenIn.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		018C67962F2F289C001F0BBB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					018C679D2F2F289C001F0BBB = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					01GECKO0012F2F289C001F0002 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					02WCPTGT2F3000000000001 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					03OLTGT2F3100000000001 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+				};
+			};
+			buildConfigurationList = 018C67992F2F289C001F0BBB /* Build configuration list for PBXProject "Reynard" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 018C67952F2F289C001F0BBB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 018C679F2F2F289C001F0BBB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				018C679D2F2F289C001F0BBB /* Reynard */,
+				01GECKO0012F2F289C001F0002 /* GeckoView */,
+				02WCPTGT2F3000000000001 /* Reynard Helper */,
+				03OLTGT2F3100000000001 /* OpenIn */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		018C679C2F2F289C001F0BBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01GECKO00E2F2F289C001F0001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02WCPRES2F3000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03OLRES2F3100000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		01GECKO0122F2F289C001F0001 /* Copy Gecko Stuff */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Gecko Stuff";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}/Scripts/AddGecko.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		018C679A2F2F289C001F0BBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		01GECKO00D2F2F289C001F0001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		02WCPSRC2F3000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03OLSRC2F3100000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0111EC292F48431600490C82 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01GECKO0012F2F289C001F0002 /* GeckoView */;
+			targetProxy = 0111EC282F48431600490C82 /* PBXContainerItemProxy */;
+		};
+		01GECKO00B2F2F289C001F0001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 01GECKO0012F2F289C001F0002 /* GeckoView */;
+			targetProxy = 01GECKO0032F2F289C001F0001 /* PBXContainerItemProxy */;
+		};
+		02WCPDEP2F3000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 02WCPTGT2F3000000000001 /* Reynard Helper */;
+			targetProxy = 02WCPPRX2F3000000000001 /* PBXContainerItemProxy */;
+		};
+		03OLDEP2F3100000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 03OLTGT2F3100000000001 /* OpenIn */;
+			targetProxy = 03OLPRX2F3100000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		018C67B22F2F289E001F0BBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Reynard/Entitlements/Reynard.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reynard/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Reynard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access lets websites in this browser scan QR codes, capture photos, and start video calls.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access lets websites in this browser provide location-based content such as maps, directions, and nearby places.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access lets websites in this browser capture your voice for calls and audio recordings.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access lets this browser save images and other media you download from websites to Photos.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/Frameworks/GeckoView.framework",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Reynard/JIT",
+					"$(PROJECT_DIR)/Reynard/JIT",
+					"$(PROJECT_DIR)/Reynard/JIT/RPPairing",
+				);
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		018C67B32F2F289E001F0BBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Reynard/Entitlements/Reynard.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reynard/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Reynard;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access lets websites in this browser scan QR codes, capture photos, and start video calls.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location access lets websites in this browser provide location-based content such as maps, directions, and nearby places.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access lets websites in this browser capture your voice for calls and audio recordings.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo library access lets this browser save images and other media you download from websites to Photos.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/Frameworks/GeckoView.framework",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Reynard/JIT",
+					"$(PROJECT_DIR)/Reynard/JIT",
+					"$(PROJECT_DIR)/Reynard/JIT/RPPairing",
+				);
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		018C67B42F2F289E001F0BBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		018C67B52F2F289E001F0BBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		01GECKO00F2F2F289C001F0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeckoView/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/Frameworks/GeckoView.framework",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.GeckoView";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(PRODUCT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		01GECKO0102F2F289C001F0001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GeckoView/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/Frameworks/GeckoView.framework",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.GeckoView";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(PRODUCT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		02WCPDBG2F3000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Helper/Entitlements/Reynard-Helper.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				ENABLE_DEBUG_DYLIB = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Helper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Reynard Helper";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../Frameworks/GeckoView.framework",
+					"@loader_path/../../Frameworks/GeckoView.framework",
+				);
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+					"-Wl,-u,_NSExtensionMain",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard.Helper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		02WCPREL2F3000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Helper/Entitlements/Reynard-Helper.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Helper/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Reynard Helper";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../Frameworks/GeckoView.framework",
+					"@loader_path/../../Frameworks/GeckoView.framework",
+				);
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(GECKO_DIST)/bin/XUL",
+					"-lmozglue",
+					"-lnss3",
+					"-lfreebl3",
+					"-lsoftokn3",
+					"-llgpllibs",
+					"-lmozavcodec",
+					"-lmozavutil",
+					"-lgkcodecs",
+					"-lmozinference",
+					"-Wl,-u,_NSExtensionMain",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard.Helper";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Reynard/Bridging/Reynard-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		03OLDBG2F3100000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				ENABLE_DEBUG_DYLIB = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = Extensions/OpenIn/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Reynard";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "";
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard.OpenIn";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		03OLREL2F3100000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01GECKO0052F2F289C001F0001 /* Reynard.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_BUILD)";
+				DEVELOPMENT_TEAM = NAR5D6HWAD;
+				FRAMEWORK_SEARCH_PATHS = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = Extensions/OpenIn/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Open in Reynard";
+				IPHONEOS_DEPLOYMENT_TARGET = "$(IPHONEOS_DEPLOYMENT_TARGET)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "";
+				MARKETING_VERSION = "$(CURRENT_VERSION)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.minh-ton.Reynard.OpenIn";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		018C67992F2F289C001F0BBB /* Build configuration list for PBXProject "Reynard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				018C67B42F2F289E001F0BBB /* Debug */,
+				018C67B52F2F289E001F0BBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		018C67B12F2F289E001F0BBB /* Build configuration list for PBXNativeTarget "Reynard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				018C67B22F2F289E001F0BBB /* Debug */,
+				018C67B32F2F289E001F0BBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		01GECKO00C2F2F289C001F0001 /* Build configuration list for PBXNativeTarget "GeckoView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01GECKO00F2F2F289C001F0001 /* Debug */,
+				01GECKO0102F2F289C001F0001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		02WCPCFG2F3000000000001 /* Build configuration list for PBXNativeTarget "Reynard Helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02WCPDBG2F3000000000001 /* Debug */,
+				02WCPREL2F3000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		03OLCFG2F3100000000001 /* Build configuration list for PBXNativeTarget "OpenIn" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03OLDBG2F3100000000001 /* Debug */,
+				03OLREL2F3100000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 018C67962F2F289C001F0BBB /* Project object */;
+}
