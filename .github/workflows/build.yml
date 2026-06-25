@@ -35,11 +35,8 @@ jobs:
 
     - name: Install ldid and lld
       run: |
-        brew install ldid llvm
-        # Symlink lld into /usr/local/bin so Apple's clang finds it via -fuse-ld=lld
-        # without overriding the default clang with Homebrew's version
-        sudo ln -sf /opt/homebrew/opt/llvm/bin/lld /usr/local/bin/lld
-        which lld && lld --version
+        brew install ldid lld
+        which lld
 
     - name: Read Gecko release tag
       id: gecko-tag
