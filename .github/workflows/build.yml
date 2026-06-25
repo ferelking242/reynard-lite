@@ -64,8 +64,7 @@ jobs:
     - name: Apply Gecko patches
       if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: |
-        shopt -s globstar nullglob
-        for patch in patches/**/*.patch; do
+        find patches -name "*.patch" | sort | while read -r patch; do
           echo "Applying $patch..."
           git -C engine/firefox apply --3way --whitespace=nowarn "../../$patch"
         done
