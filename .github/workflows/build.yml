@@ -49,29 +49,51 @@ jobs:
         path: |
           ~/.cargo/registry
           ~/.cargo/git
-        key: cargo-${{ hashFiles('support/idevice/Cargo.lock') }}
+        key: cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: cargo-
 
-    - name: Init Gecko submodule and fetch tag
+    - name: Clone Firefox source
       if: steps.gecko-cache.outputs.cache-hit != 'true'
-      run: ./tools/development/update-gecko.sh
+      run: |
+        RELEASE_TAG="${{ steps.gecko-tag.outputs.tag }}"
+        echo "Cloning Firefox at tag $RELEASE_TAG (shallow)..."
+        git clone --depth 1 --branch "$RELEASE_TAG" \
+          https://github.com/mozilla-firefox/firefox \
+          engine/firefox
 
     - name: Apply Gecko patches
       if: steps.gecko-cache.outputs.cache-hit != 'true'
-      run: ./tools/development/apply-patches.sh
+      run: |
+        shopt -s globstar nullglob
+        for patch in patches/**/*.patch; do
+          echo "Applying $patch..."
+          git -C engine/firefox apply --3way --whitespace=nowarn "../../$patch"
+        done
+        echo "All patches applied."
 
     - name: Build Gecko engine
       if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: ./tools/development/build-gecko.sh
 
-    - name: Init idevice submodule
+    - name: Clone idevice
       run: |
-        if [ ! -e support/idevice/.git ]; then
-          git submodule update --init --recursive support/idevice
+        if [ ! -d support/idevice ]; then
+          git clone --recursive https://github.com/jkcoxson/idevice support/idevice
         fi
 
     - name: Build libidevice_ffi
-      run: ./tools/development/build-idevice.sh
+      run: |
+        FFI_DIR="support/idevice/ffi"
+        OUTPUT_LIB="browser/Reynard/JIT/RPPairing/libidevice_ffi.a"
+        TARGET_DIR="support/idevice/target"
+        RUST_TARGET="aarch64-apple-ios"
+        export IPHONEOS_DEPLOYMENT_TARGET="13.0"
+        export RUSTFLAGS="-C link-arg=-miphoneos-version-min=13.0"
+        export TARGET_DIR
+        mkdir -p "$(dirname "$OUTPUT_LIB")"
+        cd "$FFI_DIR"
+        cargo build --release --target "$RUST_TARGET" --no-default-features --features full,ring
+        cp "$TARGET_DIR/$RUST_TARGET/release/libidevice_ffi.a" "../../$OUTPUT_LIB"
 
     - name: Build Xcode archive
       run: ./tools/release/build-app.sh
