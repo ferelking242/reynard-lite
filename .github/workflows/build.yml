@@ -1,0 +1,102 @@
+name: Build Reynard Lite
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: false
+
+    - name: Select Xcode 16
+      run: sudo xcode-select -s /Applications/Xcode_16.3.app/Contents/Developer
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Setup Rust (stable + aarch64-apple-ios)
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: aarch64-apple-ios
+
+    - name: Install ldid
+      run: brew install ldid
+
+    - name: Read Gecko release tag
+      id: gecko-tag
+      run: echo "tag=$(cat engine/release.txt | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+
+    - name: Cache Gecko dist
+      id: gecko-cache
+      uses: actions/cache@v4
+      with:
+        path: engine/firefox/obj-aarch64-apple-ios/dist
+        key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
+
+    - name: Cache Cargo registry
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: cargo-${{ hashFiles('support/idevice/Cargo.lock') }}
+        restore-keys: cargo-
+
+    - name: Init Gecko submodule and fetch tag
+      if: steps.gecko-cache.outputs.cache-hit != 'true'
+      run: ./tools/development/update-gecko.sh
+
+    - name: Apply Gecko patches
+      if: steps.gecko-cache.outputs.cache-hit != 'true'
+      run: ./tools/development/apply-patches.sh
+
+    - name: Build Gecko engine
+      if: steps.gecko-cache.outputs.cache-hit != 'true'
+      run: ./tools/development/build-gecko.sh
+
+    - name: Init idevice submodule
+      run: |
+        if [ ! -e support/idevice/.git ]; then
+          git submodule update --init --recursive support/idevice
+        fi
+
+    - name: Build libidevice_ffi
+      run: ./tools/development/build-idevice.sh
+
+    - name: Build Xcode archive
+      run: ./tools/release/build-app.sh
+
+    - name: Create IPA
+      run: ./tools/release/create-ipa.sh
+
+    - name: Upload IPAs as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: reynard-lite-${{ github.sha }}
+        path: |
+          dist/Reynard.ipa
+          dist/Reynard-TrollStore.tipa
+          dist/Reynard-Jailbroken.ipa
+        if-no-files-found: error
+
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          dist/Reynard.ipa
+          dist/Reynard-TrollStore.tipa
+          dist/Reynard-Jailbroken.ipa
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
