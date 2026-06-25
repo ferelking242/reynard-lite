@@ -33,10 +33,13 @@ jobs:
       with:
         targets: aarch64-apple-ios
 
-    - name: Install ldid and lld
+    - name: Install build tools
       run: |
-        brew install ldid lld
-        which lld
+        brew install ldid lld nasm yasm autoconf@2.13
+        which lld nasm
+
+    - name: Install cbindgen and other Cargo tools
+      run: cargo install cbindgen
 
     - name: Read Gecko release tag
       id: gecko-tag
