@@ -33,8 +33,10 @@ jobs:
       with:
         targets: aarch64-apple-ios
 
-    - name: Install ldid
-      run: brew install ldid
+    - name: Install ldid and lld
+      run: |
+        brew install ldid llvm
+        echo "/opt/homebrew/opt/llvm/bin" >> "$GITHUB_PATH"
 
     - name: Read Gecko release tag
       id: gecko-tag
