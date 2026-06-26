@@ -91,9 +91,10 @@ jobs:
 
     - name: Build libidevice_ffi
       run: |
+        REPO_ROOT="$(pwd)"
         FFI_DIR="support/idevice/ffi"
-        OUTPUT_LIB="browser/Reynard/JIT/RPPairing/libidevice_ffi.a"
-        TARGET_DIR="support/idevice/target"
+        OUTPUT_LIB="$REPO_ROOT/browser/Reynard/JIT/RPPairing/libidevice_ffi.a"
+        TARGET_DIR="$REPO_ROOT/support/idevice/target"
         RUST_TARGET="aarch64-apple-ios"
         export IPHONEOS_DEPLOYMENT_TARGET="13.0"
         export RUSTFLAGS="-C link-arg=-miphoneos-version-min=13.0"
@@ -101,7 +102,7 @@ jobs:
         mkdir -p "$(dirname "$OUTPUT_LIB")"
         cd "$FFI_DIR"
         cargo build --release --target "$RUST_TARGET" --no-default-features --features full,ring
-        cp "$TARGET_DIR/$RUST_TARGET/release/libidevice_ffi.a" "../../$OUTPUT_LIB"
+        cp "$TARGET_DIR/$RUST_TARGET/release/libidevice_ffi.a" "$OUTPUT_LIB"
 
     - name: Build Xcode archive
       run: ./tools/release/build-app.sh
