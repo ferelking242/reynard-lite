@@ -43,21 +43,23 @@ jobs:
       with:
         path: |
           /opt/homebrew/Cellar/ldid
+          /opt/homebrew/Cellar/libplist
           /opt/homebrew/Cellar/lld
           /opt/homebrew/Cellar/nasm
           /opt/homebrew/Cellar/yasm
           /opt/homebrew/Cellar/autoconf
-        key: brew-tools-${{ runner.os }}-${{ runner.arch }}-v1
+        key: brew-tools-${{ runner.os }}-${{ runner.arch }}-v2
 
     - name: Install build tools
       run: |
         if [ "${{ steps.brew-cache.outputs.cache-hit }}" = "true" ]; then
-          brew link --overwrite ldid lld nasm yasm autoconf 2>/dev/null \
-            || brew install ldid lld nasm yasm autoconf
+          brew link --overwrite ldid libplist lld nasm yasm autoconf 2>/dev/null \
+            || brew install ldid libplist lld nasm yasm autoconf
         else
-          brew install ldid lld nasm yasm autoconf
+          brew install ldid libplist lld nasm yasm autoconf
         fi
         which lld nasm
+        ldid 2>&1 | head -1 || true
 
     - name: Cache cbindgen binary
       id: cbindgen-cache
