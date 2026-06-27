@@ -6,6 +6,10 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: macos-26
@@ -33,12 +37,37 @@ jobs:
       with:
         targets: aarch64-apple-ios
 
+    - name: Cache Homebrew packages
+      id: brew-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          /opt/homebrew/Cellar/ldid
+          /opt/homebrew/Cellar/lld
+          /opt/homebrew/Cellar/nasm
+          /opt/homebrew/Cellar/yasm
+          /opt/homebrew/Cellar/autoconf
+        key: brew-tools-${{ runner.os }}-${{ runner.arch }}-v1
+
     - name: Install build tools
       run: |
-        brew install ldid lld nasm yasm autoconf
+        if [ "${{ steps.brew-cache.outputs.cache-hit }}" = "true" ]; then
+          brew link --overwrite ldid lld nasm yasm autoconf 2>/dev/null \
+            || brew install ldid lld nasm yasm autoconf
+        else
+          brew install ldid lld nasm yasm autoconf
+        fi
         which lld nasm
 
+    - name: Cache cbindgen binary
+      id: cbindgen-cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/bin/cbindgen
+        key: cbindgen-${{ runner.os }}-${{ runner.arch }}-v1
+
     - name: Install cbindgen and other Cargo tools
+      if: steps.cbindgen-cache.outputs.cache-hit != 'true'
       run: cargo install cbindgen
 
     - name: Read Gecko release tag
@@ -99,6 +128,7 @@ jobs:
         key: libidevice-ffi-${{ hashFiles('**/Cargo.lock') }}-v1
 
     - name: Clone idevice
+      if: steps.libidevice-cache.outputs.cache-hit != 'true'
       run: |
         if [ ! -d support/idevice ]; then
           git clone --recursive https://github.com/jkcoxson/idevice support/idevice
