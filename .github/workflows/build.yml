@@ -83,6 +83,13 @@ jobs:
       if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: ./tools/development/build-gecko.sh
 
+    - name: Cache libidevice_ffi
+      id: libidevice-cache
+      uses: actions/cache@v4
+      with:
+        path: browser/Reynard/JIT/RPPairing/libidevice_ffi.a
+        key: libidevice-ffi-${{ hashFiles('**/Cargo.lock') }}-v1
+
     - name: Clone idevice
       run: |
         if [ ! -d support/idevice ]; then
@@ -90,6 +97,7 @@ jobs:
         fi
 
     - name: Build libidevice_ffi
+      if: steps.libidevice-cache.outputs.cache-hit != 'true'
       run: |
         REPO_ROOT="$(pwd)"
         FFI_DIR="support/idevice/ffi"
