@@ -1,91 +1,90 @@
 name: Build Reynard Lite
 
-on:
-  push:
-    branches: [main]
-    tags: ['v*']
-  workflow_dispatch:
+  on:
+    push:
+      branches: [main]
+      tags: ['v*']
+    workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: macos-26
+  jobs:
+    build:
+      runs-on: macos-26
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: false
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
 
-    - name: Select Xcode 26
-      run: |
-        XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -1)
-        echo "Using Xcode: $XCODE"
-        sudo xcode-select -s "$XCODE/Contents/Developer"
-        xcodebuild -version
+      - name: Select Xcode 26
+        run: |
+          XCODE=$(find /Applications -maxdepth 1 -name 'Xcode*.app' | sort -V | tail -1)
+          echo "Using Xcode: $XCODE"
+          sudo xcode-select -s "$XCODE/Contents/Developer"
+          xcodebuild -version
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-    - name: Setup Rust (stable + aarch64-apple-ios)
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        targets: aarch64-apple-ios
+      - name: Setup Rust (stable + aarch64-apple-ios)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
 
-    - name: Install build tools
-      run: |
-        brew install ldid lld nasm yasm autoconf
-        which lld nasm
+      - name: Install build tools
+        run: |
+          brew install ldid lld nasm yasm autoconf
+          which lld nasm
 
-    - name: Install cbindgen and other Cargo tools
-      run: cargo install cbindgen
+      - name: Install cbindgen and other Cargo tools
+        run: cargo install cbindgen
 
-    - name: Read Gecko release tag
-      id: gecko-tag
-      run: echo "tag=$(cat engine/release.txt | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+      - name: Read Gecko release tag
+        id: gecko-tag
+        run: echo "tag=$(cat engine/release.txt | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
 
-    - name: Cache Gecko dist
-      id: gecko-cache
-      uses: actions/cache@v4
-      with:
-        path: engine/firefox/obj-aarch64-apple-ios/dist
-        save-always: true
-        key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
+      - name: Cache Gecko dist
+        id: gecko-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: engine/firefox/obj-aarch64-apple-ios/dist
+          key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
 
-    - name: Cache Cargo registry
-      uses: actions/cache@v4
-      with:
-        save-always: true
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-        key: cargo-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: cargo-
+      - name: Cache Cargo registry
+        uses: actions/cache@v4
+        with:
+          save-always: true
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-
 
-    - name: Clone Firefox source
-      if: steps.gecko-cache.outputs.cache-hit != 'true'
-      run: |
-        RELEASE_TAG="${{ steps.gecko-tag.outputs.tag }}"
-        echo "Cloning Firefox at tag $RELEASE_TAG (shallow)..."
-        git clone --depth 1 --branch "$RELEASE_TAG" \
-          https://github.com/mozilla-firefox/firefox \
-          engine/firefox
+      - name: Clone Firefox source
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        run: |
+          RELEASE_TAG="${{ steps.gecko-tag.outputs.tag }}"
+          echo "Cloning Firefox at tag $RELEASE_TAG (shallow)..."
+          git clone --depth 1 --branch "$RELEASE_TAG" \
+            https://github.com/mozilla-firefox/firefox \
+            engine/firefox
 
-    - name: Apply Gecko patches
-      if: steps.gecko-cache.outputs.cache-hit != 'true'
-      run: |
-        find patches -name "*.patch" | sort | while read -r patch; do
-          echo "Applying $patch..."
-          git -C engine/firefox apply --3way --whitespace=nowarn "../../$patch"
-        done
-        echo "All patches applied."
+      - name: Apply Gecko patches
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        run: |
+          find patches -name "*.patch" | sort | while read -r patch; do
+            echo "Applying $patch..."
+            git -C engine/firefox apply --3way --whitespace=nowarn "../../$patch"
+          done
+          echo "All patches applied."
 
-    - name: Build Gecko engine
-      if: steps.gecko-cache.outputs.cache-hit != 'true'
-      run: ./tools/development/build-gecko.sh
+      - name: Build Gecko engine
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        run: ./tools/development/build-gecko.sh
 
-    - name: Save Gecko dist cache
+      - name: Save Gecko dist cache
         if: steps.gecko-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
@@ -93,69 +92,70 @@ jobs:
           key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
 
       - name: Cache libidevice_ffi
-      id: libidevice-cache
-      uses: actions/cache@v4
-      with:
-        path: browser/Reynard/JIT/RPPairing/libidevice_ffi.a
-        key: libidevice-ffi-${{ hashFiles('**/Cargo.lock') }}-v1
+        id: libidevice-cache
+        uses: actions/cache@v4
+        with:
+          path: browser/Reynard/JIT/RPPairing/libidevice_ffi.a
+          key: libidevice-ffi-${{ hashFiles('**/Cargo.lock') }}-v1
 
-    - name: Clone idevice
-      run: |
-        if [ ! -d support/idevice ]; then
-          git clone --recursive https://github.com/jkcoxson/idevice support/idevice
-        fi
+      - name: Clone idevice
+        run: |
+          if [ ! -d support/idevice ]; then
+            git clone --recursive https://github.com/jkcoxson/idevice support/idevice
+          fi
 
-    - name: Build libidevice_ffi
-      if: steps.libidevice-cache.outputs.cache-hit != 'true'
-      run: |
-        REPO_ROOT="$(pwd)"
-        FFI_DIR="support/idevice/ffi"
-        OUTPUT_LIB="$REPO_ROOT/browser/Reynard/JIT/RPPairing/libidevice_ffi.a"
-        TARGET_DIR="$REPO_ROOT/support/idevice/target"
-        RUST_TARGET="aarch64-apple-ios"
-        export IPHONEOS_DEPLOYMENT_TARGET="13.0"
-        export RUSTFLAGS="-C link-arg=-miphoneos-version-min=13.0"
-        export TARGET_DIR
-        mkdir -p "$(dirname "$OUTPUT_LIB")"
-        cd "$FFI_DIR"
-        cargo build --release --target "$RUST_TARGET" --no-default-features --features full,ring
-        cp "$TARGET_DIR/$RUST_TARGET/release/libidevice_ffi.a" "$OUTPUT_LIB"
+      - name: Build libidevice_ffi
+        if: steps.libidevice-cache.outputs.cache-hit != 'true'
+        run: |
+          REPO_ROOT="$(pwd)"
+          FFI_DIR="support/idevice/ffi"
+          OUTPUT_LIB="$REPO_ROOT/browser/Reynard/JIT/RPPairing/libidevice_ffi.a"
+          TARGET_DIR="$REPO_ROOT/support/idevice/target"
+          RUST_TARGET="aarch64-apple-ios"
+          export IPHONEOS_DEPLOYMENT_TARGET="13.0"
+          export RUSTFLAGS="-C link-arg=-miphoneos-version-min=13.0"
+          export TARGET_DIR
+          mkdir -p "$(dirname "$OUTPUT_LIB")"
+          cd "$FFI_DIR"
+          cargo build --release --target "$RUST_TARGET" --no-default-features --features full,ring
+          cp "$TARGET_DIR/$RUST_TARGET/release/libidevice_ffi.a" "$OUTPUT_LIB"
 
-    - name: Build Xcode archive
-      run: ./tools/release/build-app.sh
+      - name: Build Xcode archive
+        run: ./tools/release/build-app.sh
 
-    - name: Create IPA
-      run: ./tools/release/create-ipa.sh
+      - name: Create IPA
+        run: ./tools/release/create-ipa.sh
 
-    - name: Upload Normal IPA
-      uses: actions/upload-artifact@v4
-      with:
-        name: Reynard-Normal
-        path: dist/Reynard.ipa
-        if-no-files-found: error
+      - name: Upload Normal IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Reynard-Normal
+          path: dist/Reynard.ipa
+          if-no-files-found: error
 
-    - name: Upload TrollStore IPA
-      uses: actions/upload-artifact@v4
-      with:
-        name: Reynard-TrollStore
-        path: dist/Reynard-TrollStore.tipa
-        if-no-files-found: error
+      - name: Upload TrollStore IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Reynard-TrollStore
+          path: dist/Reynard-TrollStore.tipa
+          if-no-files-found: error
 
-    - name: Upload Jailbroken IPA
-      uses: actions/upload-artifact@v4
-      with:
-        name: Reynard-Jailbroken
-        path: dist/Reynard-Jailbroken.ipa
-        if-no-files-found: error
+      - name: Upload Jailbroken IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Reynard-Jailbroken
+          path: dist/Reynard-Jailbroken.ipa
+          if-no-files-found: error
 
-    - name: Create GitHub Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v2
-      with:
-        files: |
-          dist/Reynard.ipa
-          dist/Reynard-TrollStore.tipa
-          dist/Reynard-Jailbroken.ipa
-        generate_release_notes: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Reynard.ipa
+            dist/Reynard-TrollStore.tipa
+            dist/Reynard-Jailbroken.ipa
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
