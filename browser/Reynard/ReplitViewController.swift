@@ -207,6 +207,7 @@ extension ReplitViewController: ProgressDelegate {
 extension ReplitViewController: ContentDelegate {
     func onCrash(session: GeckoSession) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.session.close()
             self.session.open()
             self.geckoView.session = self.session
             self.loadReplit()
