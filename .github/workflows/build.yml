@@ -127,14 +127,25 @@ jobs:
     - name: Create IPA
       run: ./tools/release/create-ipa.sh
 
-    - name: Upload IPAs as artifacts
+    - name: Upload Normal IPA
       uses: actions/upload-artifact@v4
       with:
-        name: reynard-lite-${{ github.sha }}
-        path: |
-          dist/Reynard.ipa
-          dist/Reynard-TrollStore.tipa
-          dist/Reynard-Jailbroken.ipa
+        name: Reynard-Normal
+        path: dist/Reynard.ipa
+        if-no-files-found: error
+
+    - name: Upload TrollStore IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: Reynard-TrollStore
+        path: dist/Reynard-TrollStore.tipa
+        if-no-files-found: error
+
+    - name: Upload Jailbroken IPA
+      uses: actions/upload-artifact@v4
+      with:
+        name: Reynard-Jailbroken
+        path: dist/Reynard-Jailbroken.ipa
         if-no-files-found: error
 
     - name: Create GitHub Release
