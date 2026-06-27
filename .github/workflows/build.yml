@@ -48,7 +48,7 @@ jobs:
           /opt/homebrew/Cellar/nasm
           /opt/homebrew/Cellar/yasm
           /opt/homebrew/Cellar/autoconf
-        key: brew-tools-${{ runner.os }}-${{ runner.arch }}-v2
+        key: brew-tools-${{ runner.os }}-${{ runner.arch }}-v3
 
     - name: Install build tools
       run: |
