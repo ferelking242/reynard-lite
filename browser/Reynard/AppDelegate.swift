@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import GeckoView
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
