@@ -19,13 +19,20 @@ cp -fL "${GECKO_DIST_BIN}/"*.dylib "${FRAMEWORKS_DIR}/"
 cp -fL "${GECKO_DIST_BIN}/XUL" "${GECKOVIEW_FW}/XUL"
 
 for file in "${GECKOVIEW_FW}/XUL" "${FRAMEWORKS_DIR}/"*.dylib; do
-	if [ -f "${file}" ]; then
-		codesign --force --sign "${SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements "${file}"
-	fi
+        if [ -f "${file}" ]; then
+                codesign --force --sign "${SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements "${file}"
+        fi
 done
 
 # copy the rest of the files, excluding the ones we already copied and the test files
+# exit 23 = partial transfer (broken symlinks in dist/bin are non-fatal)
+set +e
 rsync -pvtrlL --delete --exclude "XUL" --exclude "*.dylib" --exclude "Test*" --exclude "test_*" --exclude "*_unittest" "${GECKO_DIST_BIN}/" "${GECKOVIEW_FW_FRAMEWORKS}"
+rsync_exit=$?
+set -e
+if [ "${rsync_exit}" -ne 0 ] && [ "${rsync_exit}" -ne 23 ]; then
+    exit "${rsync_exit}"
+fi
 
 # default theme missing error fix
 mkdir -p "${GECKOVIEW_FW_FRAMEWORKS}/default-theme"
