@@ -50,11 +50,13 @@ jobs:
       uses: actions/cache@v4
       with:
         path: engine/firefox/obj-aarch64-apple-ios/dist
+        save-always: true
         key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
 
     - name: Cache Cargo registry
       uses: actions/cache@v4
       with:
+        save-always: true
         path: |
           ~/.cargo/registry
           ~/.cargo/git
