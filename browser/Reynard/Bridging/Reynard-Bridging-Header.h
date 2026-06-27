@@ -13,7 +13,7 @@
 #import "JITEnabler.h"
 #import "UIKit+Private.h"
 #import "Utils.h"
-#import <GeckoView/GeckoViewSwiftSupport.h>
-#import <GeckoView/IOSBootstrap.h>
+#import <GeckoViewSwiftSupport.h>
+#import <IOSBootstrap.h>
 
 #endif /* Reynard_Bridging_Header_h */
