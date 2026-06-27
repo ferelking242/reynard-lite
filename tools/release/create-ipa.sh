@@ -24,15 +24,15 @@ if [ -z "$APP_PATH" ]; then
         exit 1
 fi
 
-plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard" "$APP_PATH/Info.plist"
+plutil -replace CFBundleIdentifier -string "com.minh-ton.ReynardLite" "$APP_PATH/Info.plist"
 
 if [ -d "$APP_PATH/PlugIns/Reynard Helper.appex" ]; then
-        plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard.Helper" \
+        plutil -replace CFBundleIdentifier -string "com.minh-ton.ReynardLite.Helper" \
                 "$APP_PATH/PlugIns/Reynard Helper.appex/Info.plist"
 fi
 
 if [ -d "$APP_PATH/PlugIns/OpenIn.appex" ]; then
-        plutil -replace CFBundleIdentifier -string "com.minh-ton.Reynard.OpenIn" \
+        plutil -replace CFBundleIdentifier -string "com.minh-ton.ReynardLite.OpenIn" \
                 "$APP_PATH/PlugIns/OpenIn.appex/Info.plist"
 fi
 
@@ -64,4 +64,13 @@ if [ -f "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper" ]; the
 fi
 
 zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
-cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa
+# Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
+  for dylib in Payload/Reynard.app/Frameworks/*.dylib; do
+          [ -f "$dylib" ] && ldid -S "$dylib"
+  done
+  if [ -f "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL" ]; then
+          ldid -S "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL"
+  fi
+
+  zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
+  cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa
