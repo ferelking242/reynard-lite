@@ -63,8 +63,7 @@ if [ -f "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper" ]; the
                 "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper"
 fi
 
-zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
-# Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
+  # Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
   for dylib in Payload/Reynard.app/Frameworks/*.dylib; do
           [ -f "$dylib" ] && ldid -S "$dylib"
   done
@@ -74,3 +73,4 @@ zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
 
   zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
   cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa
+  
