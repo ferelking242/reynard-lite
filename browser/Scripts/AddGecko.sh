@@ -34,10 +34,12 @@ if [ "${rsync_exit}" -ne 0 ] && [ "${rsync_exit}" -ne 23 ]; then
     exit "${rsync_exit}"
 fi
 
-# default theme missing error fix
-mkdir -p "${GECKOVIEW_FW_FRAMEWORKS}/default-theme"
-cp -RfL "${DEFAULT_THEME_SRC}/" "${GECKOVIEW_FW_FRAMEWORKS}/default-theme/"
-echo "resource default-theme file:default-theme/" >> "${GECKOVIEW_FW_FRAMEWORKS}/chrome.manifest"
+# default theme — only copy when Firefox source is present (not just dist cache)
+if [ -d "${DEFAULT_THEME_SRC}" ]; then
+    mkdir -p "${GECKOVIEW_FW_FRAMEWORKS}/default-theme"
+    cp -RfL "${DEFAULT_THEME_SRC}/" "${GECKOVIEW_FW_FRAMEWORKS}/default-theme/"
+    echo "resource default-theme file:default-theme/" >> "${GECKOVIEW_FW_FRAMEWORKS}/chrome.manifest"
+fi
 
 # sign the GeckoView.framework
 codesign --force --sign "${SIGN_IDENTITY}" "${GECKOVIEW_FW}"
