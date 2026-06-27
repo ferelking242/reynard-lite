@@ -1,70 +1,70 @@
 diff --git a/dom/serviceworkers/ServiceWorkerRegistrar.cpp b/dom/serviceworkers/ServiceWorkerRegistrar.cpp
-  --- a/dom/serviceworkers/ServiceWorkerRegistrar.cpp
-  +++ b/dom/serviceworkers/ServiceWorkerRegistrar.cpp
-  @@ -1287,7 +1287,11 @@ void ServiceWorkerRegistrar::ShutdownCompleted() {
-   void ServiceWorkerRegistrar::ShutdownCompleted() {
-     MOZ_ASSERT(NS_IsMainThread());
-   
-  -  DebugOnly<nsresult> rv = GetShutdownPhase()->RemoveBlocker(this);
-  -  MOZ_ASSERT(NS_SUCCEEDED(rv));
-  +  // REYNARD: On iOS GetShutdownPhase() may return nullptr if
-  +  // nsIAsyncShutdownService was never available during startup.
-  +  if (nsCOMPtr<nsIAsyncShutdownClient> phase = GetShutdownPhase()) {
-  +    DebugOnly<nsresult> rv = phase->RemoveBlocker(this);
-  +    MOZ_ASSERT(NS_SUCCEEDED(rv));
-  +  }
-   }
-   
-  @@ -1562,11 +1566,18 @@ void ServiceWorkerRegistrar::ProfileStarted() {
-     nsAutoString blockerName;
-     MOZ_ALWAYS_SUCCEEDS(GetName(blockerName));
-   
-  -  rv = GetShutdownPhase()->AddBlocker(
-  -      this, NS_LITERAL_STRING_FROM_CSTRING(__FILE__), __LINE__, blockerName);
-  -  if (NS_WARN_IF(NS_FAILED(rv))) {
-  -    return;
-  -  }
-  +  // REYNARD: On iOS the async-shutdown service is not yet available when
-  +  // profile-after-change fires. GetShutdownPhase() returns nullptr; skip
-  +  // AddBlocker so the process does not MOZ_CRASH on startup.
-  +  nsCOMPtr<nsIAsyncShutdownClient> shutdownPhase = GetShutdownPhase();
-  +  if (!shutdownPhase) {
-  +    return;
-  +  }
-  +  rv = shutdownPhase->AddBlocker(
-  +      this, NS_LITERAL_STRING_FROM_CSTRING(__FILE__), __LINE__, blockerName);
-  +  if (NS_WARN_IF(NS_FAILED(rv))) {
-  +    return;
-  +  }
-   
-     nsCOMPtr<nsIEventTarget> target =
-         do_GetService(NS_STREAMTRANSPORTSERVICE_CONTRACTID);
-  @@ -1689,15 +1700,18 @@ nsCOMPtr<nsIAsyncShutdownClient> ServiceWorkerRegistrar::GetShutdownPhase()
-   nsCOMPtr<nsIAsyncShutdownClient> ServiceWorkerRegistrar::GetShutdownPhase()
-       const {
-     nsresult rv;
-     nsCOMPtr<nsIAsyncShutdownService> svc =
-         do_GetService("@mozilla.org/async-shutdown-service;1", &rv);
-  -  // If this fails, something is very wrong on the JS side (or we're out of
-  -  // memory), and there's no point in continuing startup. Include as much
-  -  // information as possible in the crash report.
-  -  RELEASE_ASSERT_SUCCEEDED(rv, "async shutdown service");
-  -
-  -  nsCOMPtr<nsIAsyncShutdownClient> client;
-  -  rv = svc->GetProfileBeforeChange(getter_AddRefs(client));
-  -  RELEASE_ASSERT_SUCCEEDED(rv, "profileBeforeChange shutdown blocker");
-  -  return client;
-  +  // REYNARD: On iOS nsIAsyncShutdownService may not be available when
-  +  // profile-after-change fires. Return nullptr gracefully; callers must
-  +  // check for null before dereferencing.
-  +  if (NS_WARN_IF(NS_FAILED(rv)) || !svc) {
-  +    return nullptr;
-  +  }
-  +  nsCOMPtr<nsIAsyncShutdownClient> client;
-  +  rv = svc->GetProfileBeforeChange(getter_AddRefs(client));
-  +  if (NS_WARN_IF(NS_FAILED(rv))) {
-  +    return nullptr;
-  +  }
-  +  return client;
-   }
-  
+index 79f7b581651b..a1b2c3d4e5f6 100644
+--- a/dom/serviceworkers/ServiceWorkerRegistrar.cpp
++++ b/dom/serviceworkers/ServiceWorkerRegistrar.cpp
+@@ -1287,7 +1287,11 @@ void ServiceWorkerRegistrar::ShutdownCompleted() {
+ void ServiceWorkerRegistrar::ShutdownCompleted() {
+   MOZ_ASSERT(NS_IsMainThread());
+ 
+-  DebugOnly<nsresult> rv = GetShutdownPhase()->RemoveBlocker(this);
+-  MOZ_ASSERT(NS_SUCCEEDED(rv));
++  // REYNARD: On iOS GetShutdownPhase() may return nullptr if
++  // nsIAsyncShutdownService was never available during startup.
++  if (nsCOMPtr<nsIAsyncShutdownClient> phase = GetShutdownPhase()) {
++    DebugOnly<nsresult> rv = phase->RemoveBlocker(this);
++    MOZ_ASSERT(NS_SUCCEEDED(rv));
++  }
+ }
+ 
+@@ -1562,11 +1566,18 @@ void ServiceWorkerRegistrar::ProfileStarted() {
+   nsAutoString blockerName;
+   MOZ_ALWAYS_SUCCEEDS(GetName(blockerName));
+ 
+-  rv = GetShutdownPhase()->AddBlocker(
+-      this, NS_LITERAL_STRING_FROM_CSTRING(__FILE__), __LINE__, blockerName);
+-  if (NS_WARN_IF(NS_FAILED(rv))) {
+-    return;
+-  }
++  // REYNARD: On iOS the async-shutdown service is not yet available when
++  // profile-after-change fires. GetShutdownPhase() returns nullptr; skip
++  // AddBlocker so the process does not MOZ_CRASH on startup.
++  nsCOMPtr<nsIAsyncShutdownClient> shutdownPhase = GetShutdownPhase();
++  if (!shutdownPhase) {
++    return;
++  }
++  rv = shutdownPhase->AddBlocker(
++      this, NS_LITERAL_STRING_FROM_CSTRING(__FILE__), __LINE__, blockerName);
++  if (NS_WARN_IF(NS_FAILED(rv))) {
++    return;
++  }
+ 
+   nsCOMPtr<nsIEventTarget> target =
+       do_GetService(NS_STREAMTRANSPORTSERVICE_CONTRACTID);
+@@ -1689,15 +1700,18 @@ nsCOMPtr<nsIAsyncShutdownClient> ServiceWorkerRegistrar::GetShutdownPhase()
+ nsCOMPtr<nsIAsyncShutdownClient> ServiceWorkerRegistrar::GetShutdownPhase()
+     const {
+   nsresult rv;
+   nsCOMPtr<nsIAsyncShutdownService> svc =
+       do_GetService("@mozilla.org/async-shutdown-service;1", &rv);
+-  // If this fails, something is very wrong on the JS side (or we're out of
+-  // memory), and there's no point in continuing startup. Include as much
+-  // information as possible in the crash report.
+-  RELEASE_ASSERT_SUCCEEDED(rv, "async shutdown service");
+-
+-  nsCOMPtr<nsIAsyncShutdownClient> client;
+-  rv = svc->GetProfileBeforeChange(getter_AddRefs(client));
+-  RELEASE_ASSERT_SUCCEEDED(rv, "profileBeforeChange shutdown blocker");
+-  return client;
++  // REYNARD: On iOS nsIAsyncShutdownService may not be available when
++  // profile-after-change fires. Return nullptr gracefully; callers must
++  // check for null before dereferencing.
++  if (NS_WARN_IF(NS_FAILED(rv)) || !svc) {
++    return nullptr;
++  }
++  nsCOMPtr<nsIAsyncShutdownClient> client;
++  rv = svc->GetProfileBeforeChange(getter_AddRefs(client));
++  if (NS_WARN_IF(NS_FAILED(rv))) {
++    return nullptr;
++  }
++  return client;
+ }
