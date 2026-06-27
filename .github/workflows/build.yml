@@ -85,7 +85,14 @@ jobs:
       if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: ./tools/development/build-gecko.sh
 
-    - name: Cache libidevice_ffi
+    - name: Save Gecko dist cache
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: engine/firefox/obj-aarch64-apple-ios/dist
+          key: gecko-dist-${{ steps.gecko-tag.outputs.tag }}-${{ hashFiles('patches/**') }}
+
+      - name: Cache libidevice_ffi
       id: libidevice-cache
       uses: actions/cache@v4
       with:
