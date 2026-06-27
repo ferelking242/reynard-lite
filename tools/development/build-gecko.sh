@@ -22,7 +22,7 @@
           echo "ac_add_options --enable-application=mobile/ios"
           echo "ac_add_options --target=$TARGET"
           echo "ac_add_options --enable-ios-target=13.0"
-          echo "ac_add_options --enable-webrtc"
+          echo "ac_add_options --disable-webrtc"
           echo "ac_add_options --enable-optimize"
           echo "ac_add_options --disable-debug"
           echo "ac_add_options --disable-tests"
@@ -33,7 +33,6 @@
           rustup target add "$TARGET"
   fi
 
-  # Ensure Homebrew lld (ld64.lld) is on PATH for Gecko's linker detection
   export PATH="/opt/homebrew/opt/lld/bin:/opt/homebrew/bin:$PATH"
 
   cd "$FIREFOX_DIR"
