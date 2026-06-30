@@ -30,14 +30,14 @@ rm -f "$FIREFOX_DIR/.mozconfig"
         echo "ac_add_options --disable-tests"
         echo "ac_add_options --disable-debug-symbols"
 
-        # ── Linker: use Apple ld64 (default) for iOS cross-compilation.
+        # ── Linker: use Apple ld64 for iOS cross-compilation.
         # lld was used here previously for link speed, but Apple's clang from
-        # Xcode 26+ does not expose a working -fuse-ld=lld path for iOS targets:
-        # the configure test fails with "Could not use lld as linker" because
-        # Apple's toolchain requires ld64 for aarch64-apple-ios regardless of
-        # what is installed via Homebrew.  Omitting --enable-linker lets mach
-        # pick ld64 automatically, which is the correct linker for this target.
-        # Link times are a few seconds longer; correctness and CI stability win.
+        # Xcode 26+ rejects -fuse-ld=lld for aarch64-apple-ios targets:
+        # the configure test exits with "Could not use lld as linker".
+        # Homebrew lld is not integrated into Apple's iOS toolchain path.
+        # Firefox 152 accepts --enable-linker=ld64 which maps to Apple's
+        # bundled ld64 linker — the correct linker for all iOS targets.
+        echo "ac_add_options --enable-linker=ld64"
 
         # ── LTO: thin-LTO gives most of the size/speed benefit with much shorter
         #    link times and fewer toolchain compatibility issues than full/cross LTO.
