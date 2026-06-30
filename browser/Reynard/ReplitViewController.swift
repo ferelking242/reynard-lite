@@ -8,12 +8,11 @@ final class ReplitViewController: UIViewController {
     private enum Config {
         static let replitURL = "https://replit.com"
 
-        // Mobile Safari UA – matches what Replit expects on iPhone
+        // Mobile Safari UA — matches what Replit expects on iPhone
         static let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
 
-        // Keep-alive fires only while the app is backgrounded; 30 s is plenty
-        // to prevent Gecko's child process from being suspended prematurely,
-        // while still spending less CPU/battery than the original 20 s interval.
+        // 30 s is sufficient to prevent Gecko's child process from being
+        // suspended while backgrounded, and burns less CPU/battery than 20 s.
         static let keepAliveInterval: TimeInterval = 30
     }
 
@@ -58,12 +57,11 @@ final class ReplitViewController: UIViewController {
         loadReplit()
     }
 
-    /// Release Gecko caches when iOS signals memory pressure.
-    /// On a 2 GB device (iPhone 7) this can be the difference between the tab
-    /// process surviving and being OOM-killed mid-session.
+    /// Called by iOS when memory pressure is high (common on 2 GB devices).
+    /// Dropping the URL cache frees tens of MB instantly without affecting
+    /// the active Gecko session or any in-flight network requests.
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        session.purgeHistory(keepFirst: true)
         NSURLCache.shared.removeAllCachedResponses()
     }
 
@@ -154,80 +152,59 @@ final class ReplitViewController: UIViewController {
 // MARK: - NavigationDelegate
 
 extension ReplitViewController: NavigationDelegate {
-    func onLoadRequest(_ session: GeckoSession, request: NavigationDelegate.LoadRequest) -> AllowOrDeny {
+    func onLoadRequest(session: GeckoSession, request: LoadRequest) async -> AllowOrDeny {
         return .allow
-    }
-
-    func onLocationChange(_ session: GeckoSession, url: String?, perms: [ContentPermission], hasUserGesture: Bool) {}
-    func onCanGoBack(_ session: GeckoSession, canGoBack: Bool) {}
-    func onCanGoForward(_ session: GeckoSession, canGoForward: Bool) {}
-    func onLoadError(_ session: GeckoSession, url: String?, error: Error) {
-        DispatchQueue.main.async { [weak self] in
-            self?.errorView.isHidden = false
-        }
     }
 }
 
 // MARK: - ProgressDelegate
 
 extension ReplitViewController: ProgressDelegate {
-    func onPageStart(_ session: GeckoSession, url: String) {
+    func onPageStart(session: GeckoSession, url: String) {
         DispatchQueue.main.async { [weak self] in
             self?.errorView.isHidden = true
         }
     }
-
-    func onPageStop(_ session: GeckoSession, success: Bool) {}
-    func onProgressChange(_ session: GeckoSession, progress: Int) {}
-    func onSessionStateChange(_ session: GeckoSession, sessionState: String) {}
-    func onSecurityChange(_ session: GeckoSession, securityInfo: ProgressDelegate.SecurityInformation) {}
 }
 
 // MARK: - ContentDelegate
 
 extension ReplitViewController: ContentDelegate {
-    func onTitleChange(_ session: GeckoSession, title: String?) {}
-    func onFullScreen(_ session: GeckoSession, fullScreen: Bool) {}
-    func onContextMenu(_ session: GeckoSession, screenX: Int, screenY: Int, element: ContentDelegate.ContextElement) {}
-    func onCrash(_ session: GeckoSession, isKilled: Bool) {
-        // Reload after crash/OOM kill – common on 2 GB devices
+    /// Auto-reload after a content-process crash.
+    /// On a 2 GB device an OOM kill can happen mid-session; reloading
+    /// automatically keeps the user in Replit without manual intervention.
+    func onCrash(session: GeckoSession) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.loadReplit()
         }
     }
-    func onKillProcess(_ session: GeckoSession) {
+
+    /// Same recovery path as `onCrash` but triggered by an OS-level kill.
+    func onKill(session: GeckoSession) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.loadReplit()
         }
     }
-    func onFirstComposite(_ session: GeckoSession) {}
-    func onWebAppManifest(_ session: GeckoSession, manifest: [String: Any]) {}
-    func onFocusRequest(_ session: GeckoSession) {}
-    func onCloseRequest(_ session: GeckoSession) {}
 }
 
 // MARK: - PromptDelegate
 
 extension ReplitViewController: PromptDelegate {
-    func onAlertPrompt(_ session: GeckoSession, request: AlertPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onButtonPrompt(_ session: GeckoSession, request: ButtonPromptRequest) async -> PromptResponse { request.confirm(button: .negative) }
-    func onTextPrompt(_ session: GeckoSession, request: TextPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onAuthPrompt(_ session: GeckoSession, request: PromptRequest) async -> PromptResponse { request.dismiss() }
-    func onColorPrompt(_ session: GeckoSession, request: ColorPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onDateTimePrompt(_ session: GeckoSession, request: DateTimePromptRequest) async -> PromptResponse { request.dismiss() }
-    func onFilePrompt(_ session: GeckoSession, request: FilePickerPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onFolderUploadPrompt(_ session: GeckoSession, request: FolderUploadPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onSelectPrompt(_ session: GeckoSession, request: SelectPromptRequest) async -> PromptResponse { request.dismiss() }
-    func onBeforeUnloadPrompt(_ session: GeckoSession, request: PromptRequest) async -> PromptResponse { request.dismiss() }
-    func onLoginSelect(_ session: GeckoSession, request: PromptRequest) async -> PromptResponse { request.dismiss() }
-    func onLoginSave(_ session: GeckoSession, request: PromptRequest) async -> PromptResponse { request.dismiss() }
-    func onSharePrompt(_ session: GeckoSession, request: PromptRequest) async -> PromptResponse { request.dismiss() }
+    func onPrompt(session: GeckoSession, request: PromptRequest) async -> PromptResponse? {
+        return nil
+    }
 }
 
-// MARK: - PermissionDelegate
+// MARK: - PermissionEmbedderDelegate
 
 extension ReplitViewController: PermissionEmbedderDelegate {
-    func onContentPermissionRequest(_ session: GeckoSession, request: ContentPermissionRequest) async -> AllowOrDeny { .allow }
+    func permissionDelegate(decideContentPermission permission: ContentPermission, session: GeckoSession) async -> ContentPermission.Value {
+        return .allow
+    }
+
+    func permissionDelegate(decideMediaPermission request: MediaPermissionRequest, session: GeckoSession) async -> Bool {
+        return true
+    }
 }
 
 // MARK: - Error View

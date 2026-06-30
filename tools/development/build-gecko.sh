@@ -33,8 +33,9 @@ rm -f "$FIREFOX_DIR/.mozconfig"
         # ── Linker: use lld for faster linking and smaller binary ───────────────
         echo "ac_add_options --enable-linker=lld"
 
-        # ── LTO: whole-program link-time optimisation → smaller binary / faster ─
-        echo "ac_add_options --enable-lto=cross"
+        # ── LTO: thin-LTO gives most of the size/speed benefit with much shorter
+        #    link times and fewer toolchain compatibility issues than full/cross LTO.
+        echo "ac_add_options --enable-lto=thin"
 
         # ── Strip heavy subsystems not needed for a single-site browser ─────────
         echo "ac_add_options --disable-webrtc"
