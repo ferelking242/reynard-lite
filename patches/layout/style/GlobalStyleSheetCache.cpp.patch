@@ -1,25 +1,19 @@
 diff --git a/layout/style/GlobalStyleSheetCache.cpp b/layout/style/GlobalStyleSheetCache.cpp
 --- a/layout/style/GlobalStyleSheetCache.cpp
 +++ b/layout/style/GlobalStyleSheetCache.cpp
-@@ -533,7 +533,17 @@ RefPtr<StyleSheet> GlobalStyleSheetCache::LoadSheet(
+@@ -533,7 +533,15 @@ RefPtr<StyleSheet> GlobalStyleSheetCache::LoadSheet(
  RefPtr<StyleSheet> GlobalStyleSheetCache::LoadSheet(
      nsIURI* aURI, SheetParsingMode aParsingMode, FailureAction aFailureAction) {
    if (!aURI) {
 -    ErrorLoadingSheet(aURI, "null URI", eCrash);
-+    // REYNARD: On low-memory devices (e.g. iPhone 7, 2 GB RAM) the nsIURI
-+    // allocation can fail during startup under OOM pressure, leaving aURI
-+    // null.  Calling ErrorLoadingSheet(eCrash) then causes nsPrintfCString
-+    // inside that helper to attempt its own heap allocation for the crash-
-+    // reason string; under the same OOM pressure that allocation also fails,
-+    // leaving a null destination pointer that MOZ_CRASH_UNSAFE subsequently
-+    // writes through — a nested crash inside the crash handler.
-+    //
-+    // Observed in production: ESR 0x92000046 (byte write), far = 0x0,
-+    // Thread 0 in mozilla::ErrorLoadingSheet(.cold.1)+28 on iPhone 7 iOS 15.
-+    //
-+    // Downgrade to eLogToConsole: the sheet will not load, but the process
-+    // survives startup.  A missing built-in sheet is recoverable; a hard
-+    // startup crash is not.
++    // REYNARD: A null nsIURI* indicates an OOM failure upstream — the allocation
++    // could not be satisfied at startup. Calling ErrorLoadingSheet(eCrash) then
++    // asks nsPrintfCString to allocate a crash-reason string; under the same OOM
++    // pressure that allocation also fails, leaving a null destination pointer that
++    // MOZ_CRASH_UNSAFE writes through — a nested crash inside the crash handler.
++    // (Observed: ESR 0x92000046, byte write, far = 0x0, Thread 0 in
++    // mozilla::ErrorLoadingSheet(.cold.1)+28 on iPhone 7 / iOS 15 / 2 GB RAM.)
++    // Log instead: the sheet will not load, but the process survives startup.
 +    ErrorLoadingSheet(aURI, "null URI", eLogToConsole);
      return nullptr;
    }
