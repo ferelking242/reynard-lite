@@ -1,19 +1,20 @@
 diff --git a/layout/style/GlobalStyleSheetCache.cpp b/layout/style/GlobalStyleSheetCache.cpp
 --- a/layout/style/GlobalStyleSheetCache.cpp
 +++ b/layout/style/GlobalStyleSheetCache.cpp
-@@ -533,7 +533,15 @@ RefPtr<StyleSheet> GlobalStyleSheetCache::LoadSheet(
+@@ -533,7 +533,15 @@
  RefPtr<StyleSheet> GlobalStyleSheetCache::LoadSheet(
      nsIURI* aURI, SheetParsingMode aParsingMode, FailureAction aFailureAction) {
    if (!aURI) {
 -    ErrorLoadingSheet(aURI, "null URI", eCrash);
-+    // REYNARD: A null nsIURI* indicates an OOM failure upstream — the allocation
-+    // could not be satisfied at startup. Calling ErrorLoadingSheet(eCrash) then
-+    // asks nsPrintfCString to allocate a crash-reason string; under the same OOM
-+    // pressure that allocation also fails, leaving a null destination pointer that
-+    // MOZ_CRASH_UNSAFE writes through — a nested crash inside the crash handler.
-+    // (Observed: ESR 0x92000046, byte write, far = 0x0, Thread 0 in
-+    // mozilla::ErrorLoadingSheet(.cold.1)+28 on iPhone 7 / iOS 15 / 2 GB RAM.)
-+    // Log instead: the sheet will not load, but the process survives startup.
++    // REYNARD: A null nsIURI* indicates an OOM failure upstream - the URI
++    // allocation failed at startup on a low-memory device. Calling
++    // ErrorLoadingSheet(eCrash) then asks nsPrintfCString to allocate a
++    // crash-reason string; under the same OOM pressure that also fails,
++    // leaving a null pointer that MOZ_CRASH_UNSAFE writes through - a
++    // nested crash inside the crash handler (ESR 0x92000046, byte write,
++    // far=0x0, Thread 0 ErrorLoadingSheet(.cold.1)+28, iPhone 7/iOS 15).
++    // Log instead: sheet will not load but the process survives startup.
 +    ErrorLoadingSheet(aURI, "null URI", eLogToConsole);
      return nullptr;
    }
+ 
