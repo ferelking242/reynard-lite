@@ -38,6 +38,11 @@
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
+	<!-- BGProcessingTask identifier — must match AppDelegate.bgTaskID -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.minh-ton.ReynardLite.refresh</string>
+	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>

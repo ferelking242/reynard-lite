@@ -19,7 +19,11 @@ class GeckoRuntimeImpl: NSObject, SwiftGeckoViewRuntime {
     
     @objc(childProcessDidStartWithPID:processType:)
     func childProcessDidStart(withPID pid: Int32, processType: String) {
-        // Update jetsam limit for the child process
+        // Raise the child's jetsam priority to the audio/accessory band (23)
+        // so it survives memory pressure longer than idle background apps.
+        updateJetsamPriority(pid)
+
+        // Cap the child's RSS kill-limit to the device-appropriate value.
         updateJetsamControl(pid)
         
         NotificationCenter.default.post(

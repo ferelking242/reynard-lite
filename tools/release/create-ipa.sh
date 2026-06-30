@@ -63,14 +63,30 @@ if [ -f "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper" ]; the
                 "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper"
 fi
 
-  # Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
-  for dylib in Payload/Reynard.app/Frameworks/*.dylib; do
-          [ -f "$dylib" ] && ldid -S "$dylib"
-  done
-  if [ -f "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL" ]; then
-          ldid -S "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL"
-  fi
+# ── TrollStore signing ────────────────────────────────────────────────────────
+# TrollStoreHelper's final step runs `ldid -s <app>` to strip Apple-format
+# codesign signatures from all Mach-O binaries it didn't explicitly re-sign.
+# This fails with ldid.cpp:517 on GeckoView.framework/GeckoView because that
+# large binary carries an Apple-format signature that ldid cannot parse/write.
+#
+# Fix: pre-strip + re-sign GeckoView.framework/GeckoView with ldid in CI so
+# the binary already carries an ldid-format signature. TrollStoreHelper then
+# either skips it (already clean) or processes it without error.
+GECKOVIEW_BIN="Payload/Reynard.app/Frameworks/GeckoView.framework/GeckoView"
+if [ -f "$GECKOVIEW_BIN" ]; then
+        echo "Pre-signing GeckoView.framework/GeckoView for TrollStore…"
+        # Remove any Apple codesign first (codesign is available in CI).
+        codesign --remove-signature "$GECKOVIEW_BIN" 2>/dev/null || true
+        ldid -S "$GECKOVIEW_BIN"
+fi
 
-  zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
-  cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa
-  
+# Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
+for dylib in Payload/Reynard.app/Frameworks/*.dylib; do
+        [ -f "$dylib" ] && ldid -S "$dylib"
+done
+if [ -f "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL" ]; then
+        ldid -S "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL"
+fi
+
+zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
+cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa

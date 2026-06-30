@@ -109,13 +109,28 @@ final class ReplitViewController: UIViewController {
     func handleBackground() {
         session.setActive(false)
         session.setFocused(false)
+
+        // Start the silent audio loop FIRST — this activates the "audio"
+        // background mode and prevents iOS from suspending the process.
+        // The UIBackgroundTask and keep-alive timer only work while the
+        // process is running; the audio session is what keeps it running.
+        BackgroundAudioKeepAlive.shared.start()
+
         startBackgroundTask()
         startKeepAlive()
+
+        // Schedule a BGProcessingTask so iOS wakes us up on the next
+        // suitable background opportunity (e.g. while charging).
+        AppDelegate.scheduleBackgroundRefresh()
     }
 
     func handleForeground() {
         stopKeepAlive()
         endBackgroundTask()
+
+        // Stop the silent audio once we are visible again.
+        BackgroundAudioKeepAlive.shared.stop()
+
         session.setActive(true)
         session.setFocused(true)
     }

@@ -17,7 +17,23 @@
 #import <spawn.h>
 #import <sys/wait.h>
 
-#define MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT 6
+// ── memorystatus_control commands (from XNU kern/kern_memorystatus.h) ─────────
+#define MEMORYSTATUS_CMD_SET_PRIORITY_PROPERTIES  2   // set jetsam priority band
+#define MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT    6   // set RSS kill limit
+
+// ── Jetsam priority bands ─────────────────────────────────────────────────────
+// Higher value = harder to kill. Band 23 is the "audio & accessory" tier —
+// the same level iOS uses for background-audio and accessory apps.
+// Normal foreground apps are at band 10; we sit above them so jetsam kills
+// other idle apps first and leaves our Gecko session alive.
+#define JETSAM_PRIORITY_AUDIO_AND_ACCESSORY  23
+
+// Struct layout mirrors memorystatus_priority_properties_t in XNU.
+typedef struct {
+    int32_t  priority;
+    uint64_t user_data;
+} memorystatus_priority_properties_t;
+
 #define POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE 1
 
 // ── Low-memory device tuning ──────────────────────────────────────────────────
@@ -69,14 +85,32 @@ BOOL getEntitlementValue(NSString *key) {
     return hasValue;
 }
 
+/// Sets the RSS kill-limit (the threshold at which jetsam terminates the process).
 void updateJetsamControl(pid_t pid) {
     if (!getEntitlementValue(@"com.apple.private.memorystatus")) return;
 
     int limit = jetsamLimitMB();
     if (memorystatus_control(MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT, pid, limit, NULL, 0) == -1) {
-        NSLog(@"[Reynard] Failed to set Jetsam limit to %d MB for pid %d: %s", limit, pid, strerror(errno));
+        NSLog(@"[Reynard] Failed to set jetsam limit to %d MB for pid %d: %s", limit, pid, strerror(errno));
     } else {
         NSLog(@"[Reynard] Jetsam limit → %d MB for pid %d", limit, pid);
+    }
+}
+
+/// Elevates the process to the audio/accessory priority band (23).
+/// Jetsam evicts processes in ascending priority order, so higher band = last to die.
+/// The main app and every Gecko child process should call this once on start.
+void updateJetsamPriority(pid_t pid) {
+    if (!getEntitlementValue(@"com.apple.private.memorystatus")) return;
+
+    memorystatus_priority_properties_t props = {
+        .priority  = JETSAM_PRIORITY_AUDIO_AND_ACCESSORY,
+        .user_data = 0,
+    };
+    if (memorystatus_control(MEMORYSTATUS_CMD_SET_PRIORITY_PROPERTIES, pid, 0, &props, sizeof(props)) == -1) {
+        NSLog(@"[Reynard] Failed to set jetsam priority for pid %d: %s", pid, strerror(errno));
+    } else {
+        NSLog(@"[Reynard] Jetsam priority → %d for pid %d", JETSAM_PRIORITY_AUDIO_AND_ACCESSORY, pid);
     }
 }
 
