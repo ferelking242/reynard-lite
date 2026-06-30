@@ -38,8 +38,12 @@ rm -f "$FIREFOX_DIR/.mozconfig"
         echo "ac_add_options --enable-lto=thin"
 
         # ── Strip heavy subsystems not needed for a single-site browser ─────────
+        # NOTE: --disable-accessibility is intentionally ABSENT.  Removing the
+        # accessibility subsystem at build time causes Gecko's startup sequence
+        # to call ErrorLoadingSheet(eCrash) on the missing chrome CSS files,
+        # which hard-crashes the app.  We disable accessibility at runtime via
+        # user_pref("accessibility.force_disabled", 1) instead.
         echo "ac_add_options --disable-webrtc"
-        echo "ac_add_options --disable-accessibility"
         echo "ac_add_options --disable-crashreporter"
         echo "ac_add_options --disable-updater"
         echo "ac_add_options --disable-parental-controls"
