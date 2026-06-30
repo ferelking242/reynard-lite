@@ -62,7 +62,7 @@ final class ReplitViewController: UIViewController {
     /// the active Gecko session or any in-flight network requests.
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        NSURLCache.shared.removeAllCachedResponses()
+        URLCache.shared.removeAllCachedResponses()
     }
 
     override var prefersStatusBarHidden: Bool { false }
