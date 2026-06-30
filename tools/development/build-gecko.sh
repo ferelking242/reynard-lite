@@ -30,8 +30,14 @@ rm -f "$FIREFOX_DIR/.mozconfig"
         echo "ac_add_options --disable-tests"
         echo "ac_add_options --disable-debug-symbols"
 
-        # ── Linker: use lld for faster linking and smaller binary ───────────────
-        echo "ac_add_options --enable-linker=lld"
+        # ── Linker: use Apple ld64 (default) for iOS cross-compilation.
+        # lld was used here previously for link speed, but Apple's clang from
+        # Xcode 26+ does not expose a working -fuse-ld=lld path for iOS targets:
+        # the configure test fails with "Could not use lld as linker" because
+        # Apple's toolchain requires ld64 for aarch64-apple-ios regardless of
+        # what is installed via Homebrew.  Omitting --enable-linker lets mach
+        # pick ld64 automatically, which is the correct linker for this target.
+        # Link times are a few seconds longer; correctness and CI stability win.
 
         # ── LTO: thin-LTO gives most of the size/speed benefit with much shorter
         #    link times and fewer toolchain compatibility issues than full/cross LTO.
@@ -57,7 +63,7 @@ if ! rustup target list | grep -q "^$TARGET (installed)"; then
         rustup target add "$TARGET"
 fi
 
-export PATH="/opt/homebrew/opt/lld/bin:/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
 
 cd "$FIREFOX_DIR"
 ./mach build
