@@ -9,18 +9,21 @@ ENABLE_BITCODE = NO
 
 // ── Build optimisations ────────────────────────────────────────────────────────
 // Whole-module optimisation: the Swift compiler sees all source files at once,
-// enabling dead-code stripping, devirtualisation, and inlining across modules.
-// This is the most impactful Swift flag for binary size and startup speed.
+// enabling dead-code inlining and devirtualisation across the module.
+// -Osize is like -Onone + -O but biased toward binary size over raw speed;
+// still measurably faster than no optimisation on a 2 GB device.
 SWIFT_OPTIMIZATION_LEVEL = -Osize
 
-// C/ObjC: optimise for size (-Os).  Equivalent to -O2 with size reduction passes.
-// Smaller binary → faster mmap, fewer page faults, lower peak RSS on 2 GB devices.
+// C/ObjC: optimise for size.  Equivalent to -O2 plus size-reduction passes.
+// Smaller binary → faster mmap, fewer page faults, lower peak RSS.
 GCC_OPTIMIZATION_LEVEL = s
 
-// Strip dead code and private symbols from the final binary.
+// Dead-code stripping is a *linker* flag (-dead_strip) – it operates on
+// object files before the final binary is written, so it is safe for
+// pre-built frameworks like GeckoView.  Do NOT set STRIP_STYLE or
+// STRIP_INSTALLED_PRODUCT here – those invoke `strip` as a post-build step
+// which cannot strip indirect-symbol-table symbols in GeckoView.framework.
 DEAD_CODE_STRIPPING = YES
-STRIP_STYLE = all
-STRIP_INSTALLED_PRODUCT = YES
 
 // ── Gecko paths ───────────────────────────────────────────────────────────────
 GECKO_DIST = $(SRCROOT)/../engine/firefox/obj-aarch64-apple-ios/dist
