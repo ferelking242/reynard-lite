@@ -69,6 +69,21 @@ user_pref("network.cache.memory.capacity", 8192);
 user_pref("image.mem.surfacecache.max_size_kb", 32768);
 user_pref("image.mem.max_ms_before_discard", 10000);
 
+// ── Push / Notifications ──────────────────────────────────────────────────────
+// The push service opens a persistent socket and spawns background workers.
+// On a 2 GB device that memory is better spent on the page itself. Replit's
+// web app does not require Web Push to function.
+user_pref("dom.push.enabled", false);
+user_pref("dom.webnotifications.enabled", false);
+user_pref("dom.webnotifications.serviceworker.enabled", false);
+
+// ── Session restore ───────────────────────────────────────────────────────────
+// Session restore serialises the tab state to disk on every navigation —
+// unnecessary overhead for a single-tab browser. Disabling it saves
+// I/O, background thread activity, and a small amount of heap.
+user_pref("browser.sessionstore.enabled", false);
+user_pref("sessionstore.enabled", false);
+
 // ── Telemetry / background reporters ─────────────────────────────────────────
 // These initialise at startup and allocate background threads + memory for
 // nothing.  Glean (FOG) and the legacy telemetry system are both disabled.

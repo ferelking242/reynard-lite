@@ -47,14 +47,42 @@ final class ReplitViewController: UIViewController {
     private var keepAliveTimer: Timer?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
 
+    /// Guards against re-entrant Gecko init (e.g. multiple viewDidAppear calls).
+    private var geckoReady = false
+
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1)
-        setupGecko()
+        // Do NOT call setupGecko() here.
+        //
+        // viewDidLoad fires synchronously inside UIWindow.makeKeyAndVisible()
+        // (via loadViewIfRequired → _sendViewDidLoadWithAppearanceProxyObjectTaggingEnabled).
+        // At that point the device is at the peak of launch-time memory pressure —
+        // exactly when the Kernel Triage repeatedly reports "VM - Fault hit memory
+        // shortage". Initialising a GeckoSession here triggers Gecko chrome CSS
+        // loading (GeckoViewOpenWindow → mozilla::ErrorLoadingSheet), which under
+        // OOM tries to allocate a crash-reason string in MOZ_CRASH_UNSAFE_PRINTF,
+        // fails, and writes through a null pointer → SIGSEGV at 0x0.
+        //
+        // Deferring to viewDidAppear lets makeKeyAndVisible() complete, gives
+        // UIKit time to release rendering temporaries, and reduces peak RSS
+        // before the heavy Gecko window/CSS initialisation begins.
         setupLayout()
-        loadReplit()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard !geckoReady else { return }
+        geckoReady = true
+        // A short yield lets the run loop drain any pending UIKit layout passes
+        // and gives the OS a chance to reclaim memory from the presentation phase
+        // before we allocate the Gecko window and load chrome CSS.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.setupGecko()
+            self?.loadReplit()
+        }
     }
 
     /// Called by iOS when memory pressure is high (common on 2 GB devices).

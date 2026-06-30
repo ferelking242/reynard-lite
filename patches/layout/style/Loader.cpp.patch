@@ -1,0 +1,29 @@
+diff --git a/layout/style/Loader.cpp b/layout/style/Loader.cpp
+--- a/layout/style/Loader.cpp
++++ b/layout/style/Loader.cpp
+@@ -396,11 +396,24 @@ static void ErrorLoadingSheet(nsIURI* aURI, const char* aMsg,
+ static void ErrorLoadingSheet(nsIURI* aURI, const char* aMsg,
+                               css::FailureAction aAction) {
+   nsCString spec;
+   if (aURI) {
+     aURI->GetSpec(spec);
++  } else if (aAction == css::eCrash) {
++    // REYNARD: A null nsIURI* means the URI object could not be allocated —
++    // typically an OOM failure on a low-memory device (iPhone 7, 2 GB RAM).
++    //
++    // Without this guard the crash handler invokes MOZ_CRASH_UNSAFE_PRINTF,
++    // which itself tries to allocate a heap buffer for the reason string.
++    // Under the same OOM pressure that allocation also fails, leaving a null
++    // destination pointer; the subsequent byte write through it produces a
++    // nested crash inside the crash handler (ESR 0x92000046, far = 0x0).
++    //
++    // Downgrade eCrash → eLogToConsole: the sheet will silently not load, but
++    // the process survives startup. A missing non-accessibility chrome sheet is
++    // a cosmetic degradation; a startup crash is not recoverable at all.
++    aAction = css::eLogToConsole;
++    spec = "(OOM — URI allocation failed)"_ns;
+   }
+   NS_ERROR(nsPrintfCString("%s loading %s", aMsg, spec.get()).get());
+   if (aAction == css::eCrash) {
+     MOZ_CRASH_UNSAFE_PRINTF("%s loading '%s'", aMsg, spec.get());
+   }
