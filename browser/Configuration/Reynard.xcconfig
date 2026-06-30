@@ -7,6 +7,22 @@ VALID_ARCHS = arm64
 
 ENABLE_BITCODE = NO
 
+// ── Build optimisations ────────────────────────────────────────────────────────
+// Whole-module optimisation: the Swift compiler sees all source files at once,
+// enabling dead-code stripping, devirtualisation, and inlining across modules.
+// This is the most impactful Swift flag for binary size and startup speed.
+SWIFT_OPTIMIZATION_LEVEL = -Osize
+
+// C/ObjC: optimise for size (-Os).  Equivalent to -O2 with size reduction passes.
+// Smaller binary → faster mmap, fewer page faults, lower peak RSS on 2 GB devices.
+GCC_OPTIMIZATION_LEVEL = s
+
+// Strip dead code and private symbols from the final binary.
+DEAD_CODE_STRIPPING = YES
+STRIP_STYLE = all
+STRIP_INSTALLED_PRODUCT = YES
+
+// ── Gecko paths ───────────────────────────────────────────────────────────────
 GECKO_DIST = $(SRCROOT)/../engine/firefox/obj-aarch64-apple-ios/dist
 
 HEADER_SEARCH_PATHS = $(inherited) $(GECKO_DIST)/include $(GECKO_DIST)/include/GeckoView $(SRCROOT)/GeckoView

@@ -20,6 +20,34 @@
 #define MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT 6
 #define POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE 1
 
+// ── Low-memory device tuning ──────────────────────────────────────────────────
+//
+// iPhone 7 has 2 GB physical RAM.  iOS itself + the main process need headroom,
+// so we cap the tab-process jetsam limit conservatively:
+//
+//   • 2 GB  device → 480 MB cap   (enough for Replit, avoids OOM kills)
+//   • 3 GB+ device → 640 MB cap
+//   • 4 GB+ device → 850 MB cap
+//   • 6 GB+ device → 75% of physical (original formula, high-end devices)
+//
+// These values are intentionally conservative so the OS never force-kills the
+// tab process mid-session on low-RAM hardware.
+// ─────────────────────────────────────────────────────────────────────────────
+
+static int jetsamLimitMB(void) {
+    uint64_t physMB = (uint64_t)(NSProcessInfo.processInfo.physicalMemory >> 20);
+
+    if (physMB <= 2048) {
+        return 480;           // iPhone 7 / SE 1st gen (2 GB)
+    } else if (physMB <= 3072) {
+        return 640;           // iPhone 8 / X (3 GB)
+    } else if (physMB <= 4096) {
+        return 850;           // iPhone XS / 11 (4 GB)
+    } else {
+        return (int)(physMB * 0.75);  // 6 GB+ flagships – keep original headroom
+    }
+}
+
 CFTypeRef SecTaskCopyValueForEntitlement(void *task, NSString *entitlement, CFErrorRef _Nullable *error);
 void *SecTaskCreateFromSelf(CFAllocatorRef allocator);
 int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *buffer, size_t buffersize);
@@ -31,11 +59,11 @@ extern int posix_spawnattr_set_persona_gid_np(const posix_spawnattr_t * __restri
 BOOL getEntitlementValue(NSString *key) {
     void *secTask = SecTaskCreateFromSelf(NULL);
     if (!secTask) return NO;
-    
+
     CFTypeRef value = SecTaskCopyValueForEntitlement(secTask, key, nil);
     CFRelease(secTask);
     if (!value) return NO;
-    
+
     BOOL hasValue = ![(__bridge id)value isKindOfClass:NSNumber.class] || [(__bridge NSNumber *)value boolValue];
     CFRelease(value);
     return hasValue;
@@ -43,41 +71,40 @@ BOOL getEntitlementValue(NSString *key) {
 
 void updateJetsamControl(pid_t pid) {
     if (!getEntitlementValue(@"com.apple.private.memorystatus")) return;
-    
-    // FIXME: Find an actual resonable limit instead of setting 75% of physical mem
-    int limit = (int)((NSProcessInfo.processInfo.physicalMemory >> 20) * 0.75);
+
+    int limit = jetsamLimitMB();
     if (memorystatus_control(MEMORYSTATUS_CMD_SET_JETSAM_TASK_LIMIT, pid, limit, NULL, 0) == -1) {
-        NSLog(@"Failed to set Jetsam task limit to %d MB for pid %d: error: %s", limit, pid, strerror(errno));
+        NSLog(@"[Reynard] Failed to set Jetsam limit to %d MB for pid %d: %s", limit, pid, strerror(errno));
     } else {
-        NSLog(@"Successfully set Jetsam task limit to %d MB for pid %d", limit, pid);
+        NSLog(@"[Reynard] Jetsam limit → %d MB for pid %d", limit, pid);
     }
 }
 
 int spawnRoot(NSString *path, NSArray<NSString *> *args) {
     NSMutableArray<NSString *> *arguments = args.mutableCopy ?: [NSMutableArray new];
     [arguments insertObject:path atIndex:0];
-    
+
     NSUInteger argCount = arguments.count;
     char **argv = calloc(argCount + 1, sizeof(char *));
     for (NSUInteger index = 0; index < argCount; index++) {
         argv[index] = strdup(arguments[index].UTF8String);
     }
-    
+
     posix_spawnattr_t attributes;
     posix_spawnattr_init(&attributes);
     posix_spawnattr_set_persona_np(&attributes, 99, POSIX_SPAWN_PERSONA_FLAGS_OVERRIDE);
     posix_spawnattr_set_persona_uid_np(&attributes, 0);
     posix_spawnattr_set_persona_gid_np(&attributes, 0);
-    
+
     pid_t taskPID = 0;
     int spawnError = posix_spawn(&taskPID, path.fileSystemRepresentation, NULL, &attributes, argv, NULL);
-    
+
     posix_spawnattr_destroy(&attributes);
     for (NSUInteger index = 0; index < argCount; index++) free(argv[index]);
     free(argv);
-    
+
     if (spawnError != 0) return spawnError;
-    
+
     int status = 0;
     do {
         if (waitpid(taskPID, &status, 0) == -1) {
@@ -85,6 +112,6 @@ int spawnRoot(NSString *path, NSArray<NSString *> *args) {
             return errno;
         }
     } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-    
+
     return WEXITSTATUS(status);
 }
