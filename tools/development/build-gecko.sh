@@ -53,7 +53,10 @@ rm -f "$FIREFOX_DIR/.mozconfig"
         echo "ac_add_options --disable-crashreporter"
         echo "ac_add_options --disable-updater"
         echo "ac_add_options --disable-parental-controls"
-        echo "ac_add_options --disable-eme"
+        # NOTE: --disable-eme is intentionally absent.
+        # On the mobile/ios application, EME is not compiled in and the
+        # configure option is unavailable, so passing it aborts configure
+        # with "not available in this configuration".
 
         # ── WASM sandboxing off (saves ~5 MB, no security regression for this use) ─
         echo "ac_add_options --without-wasm-sandboxed-libraries"
