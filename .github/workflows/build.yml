@@ -97,9 +97,20 @@ jobs:
       run: |
         RELEASE_TAG="${{ steps.gecko-tag.outputs.tag }}"
         echo "Cloning Firefox at tag $RELEASE_TAG (shallow)..."
-        git clone --depth 1 --branch "$RELEASE_TAG" \
-          https://github.com/mozilla-firefox/firefox \
-          engine/firefox
+        # engine/firefox may already exist here (but be a non-git directory
+        # tree) when the Gecko dist cache was restored, since that cache's
+        # path is engine/firefox/obj-aarch64-apple-ios/dist and restoring it
+        # creates the parent directories first. A plain `git clone` refuses
+        # to clone into a pre-existing non-empty directory, so init/fetch
+        # into it in place instead, which works whether or not it already
+        # has content.
+        mkdir -p engine/firefox
+        if [ ! -d engine/firefox/.git ]; then
+          git -C engine/firefox init -q
+          git -C engine/firefox remote add origin https://github.com/mozilla-firefox/firefox
+        fi
+        git -C engine/firefox fetch --depth 1 origin "$RELEASE_TAG"
+        git -C engine/firefox checkout --force FETCH_HEAD
       # NOTE: this step always runs, even when the Gecko dist cache hits.
       # dist/bin/res/*.css (html.css, forms.css, ua.css, etc.) and several
       # other packaged resources are symlinks into this source tree, not
