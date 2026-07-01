@@ -64,21 +64,38 @@ if [ -f "Payload/Reynard.app/PlugIns/Reynard Helper.appex/Reynard Helper" ]; the
 fi
 
 # ── TrollStore signing ────────────────────────────────────────────────────────
-# TrollStoreHelper's final step runs `ldid -s <app>` to strip Apple-format
-# codesign signatures from every Mach-O binary it didn't explicitly re-sign
-# itself. On large binaries (e.g. GeckoView.framework/GeckoView) this hits
-# ldid.cpp:517, which cannot parse/rewrite the Apple-format signature blob.
-# The failure isn't silent: trollstorehelper repeatedly logs "Write failed"
-# (once per mmap'd segment it tries to patch) before aborting the install,
-# which is exactly the symptom reported.
+# After per-binary signing (above), trollstorehelper *itself* runs one final
+# catch-all pass — `ldid -s <app-dir>` — that walks the whole bundle and
+# strips whatever signature each Mach-O currently carries, regardless of
+# whether we pre-signed it. On GeckoView.framework/GeckoView this hits:
+#   ldid.cpp(517): _assert(): stream.sputn(...) == writ
+# This is a known 32-bit-overflow bug in the `ldid` build bundled inside
+# TrollStore.app itself: writing back a Mach-O whose size crosses the
+# internal 32-bit offset boundary makes sputn()'s write fail (logged as
+# repeated "Write failed"), then aborts the whole install. Because that
+# `ldid` binary lives inside TrollStore, not in this repo, we can't patch it
+# directly — the only lever we have is keeping GeckoView's binary small
+# enough to stay under the size that triggers the overflow.
 #
-# Root-cause fix: don't hand-pick which binaries to pre-sign. Recursively
-# find *every* Mach-O file inside the .app bundle (main binary, appex
-# binaries, frameworks, dylibs — including anything nested inside
-# GeckoView.framework), strip any Apple codesign, and re-sign it with ldid
-# ahead of time. TrollStoreHelper then finds every binary already carrying
-# an ldid-format signature and either skips it or reprocesses it cleanly,
-# instead of choking on whichever binary we forgot to list by hand.
+# Mitigation: strip local/debug symbols from the large Gecko binaries before
+# signing. `strip -x` only removes symbols not required for dynamic linking
+# (unlike Xcode's automatic STRIP_INSTALLED_PRODUCT/STRIP_STYLE, which is
+# intentionally disabled in Reynard.xcconfig because it runs mid-build and
+# corrupts GeckoView's indirect symbol table). Running it here, after the
+# archive is fully linked, is safe and can meaningfully shrink the binary.
+for bigbin in \
+        "Payload/Reynard.app/Frameworks/GeckoView.framework/GeckoView" \
+        "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL"
+do
+        if [ -f "$bigbin" ]; then
+                echo "Stripping local symbols from $bigbin to reduce size for TrollStore ldid…"
+                SIZE_BEFORE=$(wc -c < "$bigbin")
+                strip -x "$bigbin" || echo "  strip -x failed on $bigbin, continuing with unstripped binary"
+                SIZE_AFTER=$(wc -c < "$bigbin")
+                echo "  size: $SIZE_BEFORE -> $SIZE_AFTER bytes"
+        fi
+done
+
 APP_BUNDLE="Payload/Reynard.app"
 
 is_macho() {
