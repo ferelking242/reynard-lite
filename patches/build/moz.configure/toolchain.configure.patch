@@ -1,0 +1,17 @@
+diff --git a/build/moz.configure/toolchain.configure b/build/moz.configure/toolchain.configure
+--- a/build/moz.configure/toolchain.configure
++++ b/build/moz.configure/toolchain.configure
+@@ -1795,6 +1795,13 @@
+             if retcode == 1 and "Logging ld64 options" in stderr:
+                 kind = "ld64"
+ 
++
++            elif retcode == 1 and linker == "ld64":
++                # REYNARD: Xcode 26+ ld64 no longer emits "Logging ld64 options"
++                # for LD_PRINT_OPTIONS=1. An exit code of 1 for the --version
++                # probe on Darwin is conclusive evidence that ld64 is present and
++                # working. Trust it and continue.
++                kind = "ld64"
+             elif retcode != 0:
+                 return None
+ 
