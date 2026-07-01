@@ -65,28 +65,48 @@ fi
 
 # ── TrollStore signing ────────────────────────────────────────────────────────
 # TrollStoreHelper's final step runs `ldid -s <app>` to strip Apple-format
-# codesign signatures from all Mach-O binaries it didn't explicitly re-sign.
-# This fails with ldid.cpp:517 on GeckoView.framework/GeckoView because that
-# large binary carries an Apple-format signature that ldid cannot parse/write.
+# codesign signatures from every Mach-O binary it didn't explicitly re-sign
+# itself. On large binaries (e.g. GeckoView.framework/GeckoView) this hits
+# ldid.cpp:517, which cannot parse/rewrite the Apple-format signature blob.
+# The failure isn't silent: trollstorehelper repeatedly logs "Write failed"
+# (once per mmap'd segment it tries to patch) before aborting the install,
+# which is exactly the symptom reported.
 #
-# Fix: pre-strip + re-sign GeckoView.framework/GeckoView with ldid in CI so
-# the binary already carries an ldid-format signature. TrollStoreHelper then
-# either skips it (already clean) or processes it without error.
-GECKOVIEW_BIN="Payload/Reynard.app/Frameworks/GeckoView.framework/GeckoView"
-if [ -f "$GECKOVIEW_BIN" ]; then
-        echo "Pre-signing GeckoView.framework/GeckoView for TrollStore…"
-        # Remove any Apple codesign first (codesign is available in CI).
-        codesign --remove-signature "$GECKOVIEW_BIN" 2>/dev/null || true
-        ldid -S "$GECKOVIEW_BIN"
-fi
+# Root-cause fix: don't hand-pick which binaries to pre-sign. Recursively
+# find *every* Mach-O file inside the .app bundle (main binary, appex
+# binaries, frameworks, dylibs — including anything nested inside
+# GeckoView.framework), strip any Apple codesign, and re-sign it with ldid
+# ahead of time. TrollStoreHelper then finds every binary already carrying
+# an ldid-format signature and either skips it or reprocesses it cleanly,
+# instead of choking on whichever binary we forgot to list by hand.
+APP_BUNDLE="Payload/Reynard.app"
 
-# Re-sign Gecko dylibs and XUL with ldid for TrollStore compatibility
-for dylib in Payload/Reynard.app/Frameworks/*.dylib; do
-        [ -f "$dylib" ] && ldid -S "$dylib"
+is_macho() {
+        # Reads the first 4 bytes and checks for Mach-O / fat-binary magic.
+        magic="$(dd if="$1" bs=4 count=1 2>/dev/null | od -An -tx1 | tr -d ' \n')"
+        case "$magic" in
+                cffaedfe|feedfacf|cafebabe|bebafeca) return 0 ;;
+                *) return 1 ;;
+        esac
+}
+
+# The main app binary and the Helper appex binary were already re-signed
+# above with their specific entitlements files — don't clobber those with a
+# blank `ldid -S` here.
+MAIN_BIN="$APP_BUNDLE/Reynard"
+HELPER_BIN="$APP_BUNDLE/PlugIns/Reynard Helper.appex/Reynard Helper"
+
+echo "Scanning $APP_BUNDLE for remaining Mach-O binaries to re-sign for TrollStore…"
+find "$APP_BUNDLE" -type f | while IFS= read -r bin; do
+        case "$bin" in
+                "$MAIN_BIN"|"$HELPER_BIN") continue ;;
+        esac
+        if is_macho "$bin"; then
+                echo "  pre-signing: $bin"
+                codesign --remove-signature "$bin" 2>/dev/null || true
+                ldid -S "$bin" 2>&1 | sed "s#^#    #"
+        fi
 done
-if [ -f "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL" ]; then
-        ldid -S "Payload/Reynard.app/Frameworks/GeckoView.framework/XUL"
-fi
 
 zip -r ../Reynard-TrollStore.tipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
 cp ../Reynard-TrollStore.tipa ../Reynard-Jailbroken.ipa
