@@ -94,16 +94,30 @@ jobs:
         restore-keys: cargo-
 
     - name: Clone Firefox source
-      if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: |
         RELEASE_TAG="${{ steps.gecko-tag.outputs.tag }}"
         echo "Cloning Firefox at tag $RELEASE_TAG (shallow)..."
         git clone --depth 1 --branch "$RELEASE_TAG" \
           https://github.com/mozilla-firefox/firefox \
           engine/firefox
+      # NOTE: this step always runs, even when the Gecko dist cache hits.
+      # dist/bin/res/*.css (html.css, forms.css, ua.css, etc.) and several
+      # other packaged resources are symlinks into this source tree, not
+      # real files. browser/Scripts/AddGecko.sh copies them into
+      # GeckoView.framework with `rsync -L`, which dereferences symlinks by
+      # reading the target path. If engine/firefox isn't checked out (as
+      # happened whenever the dist cache was warm), those symlinks are
+      # dangling, rsync silently drops them (non-fatal partial transfer),
+      # and the shipped app has an EMPTY res/ directory. At startup,
+      # GlobalStyleSheetCache::BuiltInSheet() then fails to load required
+      # built-in stylesheets and calls ErrorLoadingSheet(eCrash), which hits
+      # the OOM/nested-crash bug in ErrorLoadingSheet's own crash-reason
+      # formatting (see GlobalStyleSheetCache.cpp.patch) and the app SIGSEGVs
+      # in mozilla::PrintfTarget::vprint at startup instead of ever
+      # rendering. Cloning is comparatively cheap; only the expensive
+      # `./mach build` step below is skipped on a cache hit.
 
     - name: Apply Gecko patches
-      if: steps.gecko-cache.outputs.cache-hit != 'true'
       run: |
         find patches -name "*.patch" | sort | while read -r patch; do
           echo "Applying $patch..."
